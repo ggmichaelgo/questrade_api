@@ -84,7 +84,7 @@ module QuestradeApi
     end
 
     def build_connection
-      Faraday.new(login_url) do |faraday|
+      Faraday.new(login_url, ssl: { verify: live? }) do |faraday|
         faraday.response :logger
         faraday.adapter Faraday.default_adapter
         faraday.headers['Content-Type'] = 'application/json'

@@ -22,7 +22,8 @@ module QuestradeApi
         # TODO: Review this later
         @connection =
           self.class.connection(url: url,
-                                access_token: @authorization.access_token)
+                                access_token: @authorization.access_token,
+                                is_live: @authorization.live?)
       end
 
       # @return [String]
@@ -35,10 +36,13 @@ module QuestradeApi
       # @param params [Hash] for connection.
       # @option params [String] :url of endpoint.
       # @option params [String] :access_token to call endpoint.
+      # @option params [Boolean] :is_live to checks mode is live.
       #
       # @return [Faraday] Object with attributes set up to call proper endpoint.
       def self.connection(params = {})
-        Faraday.new(params[:url]) do |faraday|
+        is_live = params[:is_live]
+
+        Faraday.new(params[:url], ssl: { verify: is_live }) do |faraday|
  #         faraday.response :logger
           faraday.adapter Faraday.default_adapter
           faraday.headers['Content-Type'] = 'application/json'
